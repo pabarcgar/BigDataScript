@@ -2,6 +2,7 @@
 FROM golang:1.11-alpine3.8 as bigdatascript-installer
 
 # Add JDK 8
+RUN apk update
 RUN apk add openjdk8
 
 # install ANT
@@ -16,8 +17,10 @@ WORKDIR $HOME/BigDataScript
 ADD . .
 RUN ./scripts/install.sh
 
-# This is the second stage. The base image just need JRE and the resulting $HOME/.bds directory from the first stage
+# This is the second stage. The base image just need JRE, bash and the resulting $HOME/.bds directory from the first stage
 FROM openjdk:8-jre-alpine
+RUN apk update
+RUN apk add bash
 ENV HOME="/root"
 WORKDIR $HOME
 COPY --from=bigdatascript-installer $HOME/.bds .bds
